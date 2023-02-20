@@ -1,3 +1,6 @@
+# Before you begin
+
+See the main [../README.md](../README.md).
 
 # Solana dApp Scaffold Next
 

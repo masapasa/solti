@@ -1,14 +1,19 @@
 [features]
 seeds = false
 [programs.localnet]
-sollery = "Fg6PaFpoGXkYsidMpWTK6W2BeZ7FEfcYkg476zPFsLnS"
+# Need to update this ID after the first deployment to localnet (e.g. by running scripts/update-anchor-toml.sh).
+sollery = "5KeLPA4bsXnC9XxcVgAdKcFTNiYx74CHxa4FvLgBR2rU"
 
 [registry]
 url = "https://anchor.projectserum.com"
 
 [provider]
 cluster = "localnet"
-wallet = "/Users/i/.config/solana/id.json"
+wallet = "~/.config/solana/id.json" # Changed from '/Users/<user>' to '~'
 
 [scripts]
 test = "yarn run ts-mocha -p ./tsconfig.json -t 1000000 tests/**/*.ts"
+
+# Added this section, because 'anchor run test' was trying to connect to ::1 instead of 127.0.0.1. See https://book.anchor-lang.com/anchor_references/anchor-toml_reference.html#testvalidator
+[test.validator]
+bind_address = "127.0.0.1"
