@@ -1,0 +1,1 @@
+NEXT_PUBLIC_PROGRAM_ID=`solana address -k ../program/target/deploy/*-keypair.json` next dev
