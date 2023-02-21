@@ -66,7 +66,7 @@ export const GalleryView: FC = ({}) => {
       })
       .rpc();
 
-    await fetchLinks();
+    await fetchSubmissions();
   }
 
   async function downvote(index: number) {
@@ -83,7 +83,7 @@ export const GalleryView: FC = ({}) => {
       })
       .rpc();
 
-    await fetchLinks();
+    await fetchSubmissions();
   }
 
   async function finalizeTip() {
@@ -139,26 +139,36 @@ export const GalleryView: FC = ({}) => {
     );
 
     setDataAccountInitialized(true);
-    await fetchLinks();
+    await fetchSubmissions();
   }
 
-  async function fetchLinks() {
+  async function fetchSubmissions() {
     if (!program) {
-      console.error(`fetchLinks: program is ${program}. Returning.`);
+      console.error(`fetchSubmissions: program is ${program}. Returning.`);
       return;
     }
 
-    console.log("fetchLinks: Fetching the data account...");
-    const account = await program.account.dataAccount.fetch(
-      dataAccount.publicKey
-    );
-    if (!account) {
-      console.error(`fetchLinks: account is ${account}. Returning.`);
-      return;
-    }
-    console.log("fetchLinks: Successfully fetched the data account!", account);
+    console.log("fetchSubmissions: Fetching the data account...");
+    try {
+      const account = await program.account.dataAccount.fetch(
+        dataAccount.publicKey
+      );
+      if (!account) {
+        console.error(`fetchSubmissions: account is ${account}. Returning.`);
+        return;
+      }
+      console.log(
+        "fetchSubmissions: Successfully fetched the data account!",
+        account
+      );
 
-    setSubmissions(account.submissions as Submission[]);
+      setSubmissions(account.submissions as Submission[]);
+    } catch (e) {
+      console.log(
+        "fetchSubmissions: Need to initialize the data account first."
+      );
+      setDataAccountInitialized(false);
+    }
   }
 
   async function addSubmission(url: string) {
@@ -176,7 +186,7 @@ export const GalleryView: FC = ({}) => {
       .rpc();
     console.log(`addSubmission: Successfully added ${url}!`);
 
-    await fetchLinks();
+    await fetchSubmissions();
   }
 
   useEffect(() => {
@@ -185,7 +195,7 @@ export const GalleryView: FC = ({}) => {
   }, [user]);
 
   useEffect(() => {
-    if (program) fetchLinks();
+    if (program) fetchSubmissions();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [program]);
 
