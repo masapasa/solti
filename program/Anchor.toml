@@ -2,7 +2,7 @@
 seeds = false
 [programs.localnet]
 # Need to update this ID after the first deployment to localnet (e.g. by running scripts/update-anchor-toml.sh).
-sollery = "5KeLPA4bsXnC9XxcVgAdKcFTNiYx74CHxa4FvLgBR2rU"
+sollery = "5KSTW7o5W3XhsDxcRU4FCAhUbVB5mVejyPF7Xc343ysM"
 
 [registry]
 url = "https://anchor.projectserum.com"

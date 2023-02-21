@@ -4,19 +4,21 @@
 
 ## Quick start
 
-### Terminal 1
+### Terminal 1 (localnet only)
+
+Only needed if `cluster = "localnet"` in [Anchor.toml](program/Anchor.toml).
 
 ```
 cd program && npm run validator
 ```
 
-### Terminal 2
+### Terminal 2 (localnet & devnet)
 
 ```
-cd program && npm run init
+cd program && npm run project:init
 ```
 
-### Terminal 3
+### Terminal 3 (localnet & devnet)
 
 ```
 cd app && npm i && npm run dev
@@ -116,15 +118,4 @@ $ cd app
 $ npm i
 
 $ npm run dev
-```
-
-### Devnet
-  
-```shell
-$ # cluster = "devnet"
-$ solana airdrop 2
-$ anchor build # twice?
-$ anchor deploy
-$ anchor idl init  -f target/idl/*.json `solana address -k target/deploy/*-keypair.json` # 1st time
-$ anchor idl upgrade  -f target/idl/*.json `solana address -k target/deploy/*-keypair.json` # from the 2nd time onwards
 ```

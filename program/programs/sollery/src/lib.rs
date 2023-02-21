@@ -1,7 +1,7 @@
 use anchor_lang::prelude::*;
 
 // Need to update this ID after the first deployment to localnet (e.g. by running scripts/update-lib-rs.sh).
-declare_id!("5KeLPA4bsXnC9XxcVgAdKcFTNiYx74CHxa4FvLgBR2rU");
+declare_id!("5KSTW7o5W3XhsDxcRU4FCAhUbVB5mVejyPF7Xc343ysM");
 
 #[program]
 pub mod sollery {
@@ -39,6 +39,10 @@ pub mod sollery {
         data_account.submissions[index as usize].votes -= 1; // TODO: Check if there's actually something at the given index.
         Ok(())
     }
+
+    // pub fn noop() -> Result <()> {
+    //     Ok(())
+    // }
 }
 
 #[derive(Accounts)]

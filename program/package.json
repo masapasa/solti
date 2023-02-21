@@ -3,19 +3,17 @@
     "lint:fix": "prettier */*.js \"*/**/*{.js,.ts}\" -w",
     "lint": "prettier */*.js \"*/**/*{.js,.ts}\" --check",
     "validator": "solana-test-validator",
-    "a:build": "anchor build",
-    "a:deploy": "anchor deploy",
-    "a:both": "npm run a:build && npm run a:deploy",
     "id:anchor": "sh scripts/update-anchor-toml.sh",
     "id:lib": "sh scripts/update-lib-rs.sh",
     "id:both": "npm run id:anchor && npm run id:lib",
-    "init": "npm run a:both && npm run id:both",
     "test:reuse": "anchor run test",
     "test:new": "anchor test",
-    "get-id": "solana address -k target/deploy/sollery-keypair.json",
-    "": "",
-    "program:init": "anchor build && anchor deploy && anchor idl init  -f target/idl/*.json `solana address -k target/deploy/*-keypair.json`",
-    "program:upgrade": "anchor build && anchor deploy && anchor idl upgrade  -f target/idl/*.json `solana address -k target/deploy/*-keypair.json`"
+    "get-program-id": "solana address -k target/deploy/sollery-keypair.json",
+    "idl:init": "anchor idl init  -f target/idl/*.json `solana address -k target/deploy/*-keypair.json`",
+    "idl:upgrade": "anchor idl upgrade  -f target/idl/*.json `solana address -k target/deploy/*-keypair.json`",
+    "project:init": "rm -fr target && anchor build && anchor deploy && npm run id:both && anchor build && anchor deploy && npm run idl:init && cd ../app && npm run generate-data-account",
+    "project:upgrade": "anchor build && anchor deploy && npm run idl:upgrade",
+    "airdrop": "solana airdrop 2"
   },
   "dependencies": {
     "@project-serum/anchor": "^0.24.2"

@@ -9,7 +9,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "generate-data-account": "solana-keygen new --no-bip39-passphrase -o src/dataAccountSecretKey.json"
+    "generate-data-account": "solana-keygen new --no-bip39-passphrase -o src/dataAccountSecretKey.json --force"
   },
   "dependencies": {
     "@coral-xyz/anchor": "^0.26.0",

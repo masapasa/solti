@@ -218,7 +218,9 @@ export const GalleryView: FC = ({}) => {
         <h1 className="text-center text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-br from-indigo-500 to-fuchsia-500 mt-10 mb-8">
           Gallery
         </h1>
-        {!dataAccountInitialized ? (
+        {!wallet.connected ? (
+          <p className="text-2xl">Wallet not connected.</p>
+        ) : !dataAccountInitialized ? (
           <button
             className={`${baseButtonStyle} rounded-sm self-stretch`}
             onClick={initializeDataAccount}
