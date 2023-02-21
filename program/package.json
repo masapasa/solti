@@ -12,7 +12,10 @@
     "init": "npm run a:both && npm run id:both",
     "test:reuse": "anchor run test",
     "test:new": "anchor test",
-    "get-id": "solana address -k target/deploy/sollery-keypair.json"
+    "get-id": "solana address -k target/deploy/sollery-keypair.json",
+    "": "",
+    "program:init": "anchor build && anchor deploy && anchor idl init  -f target/idl/*.json `solana address -k target/deploy/*-keypair.json`",
+    "program:upgrade": "anchor build && anchor deploy && anchor idl upgrade  -f target/idl/*.json `solana address -k target/deploy/*-keypair.json`"
   },
   "dependencies": {
     "@project-serum/anchor": "^0.24.2"

@@ -124,7 +124,7 @@ $ npm run dev
 $ # cluster = "devnet"
 $ solana airdrop 2
 $ anchor build # twice?
-$ anchor idl init  -f target/idl/*.json `solana address -k target/deploy/*-keypair.json`
-$ anchor idl upgrade  -f target/idl/*.json `solana address -k target/deploy/*-keypair.json`
 $ anchor deploy
+$ anchor idl init  -f target/idl/*.json `solana address -k target/deploy/*-keypair.json` # 1st time
+$ anchor idl upgrade  -f target/idl/*.json `solana address -k target/deploy/*-keypair.json` # from the 2nd time onwards
 ```

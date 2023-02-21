@@ -8,13 +8,13 @@ import {
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import { notify } from "../../utils/notifications";
 import { sendSol } from "utils/sendSol";
-import { AnchorProvider, BN, Idl, Program, Wallet } from "@coral-xyz/anchor";
+import { AnchorProvider, BN, Idl, Program } from "@coral-xyz/anchor";
 
 // https://i.giphy.com/media/eIG0HfouRQJQr1wBzz/giphy.webp
 
 type Submission = {
-  imageUrl: "https://i.giphy.com/media/eIG0HfouRQJQr1wBzz/giphy.webp";
-  userAddress: PublicKey;
+  url: "https://i.giphy.com/media/eIG0HfouRQJQr1wBzz/giphy.webp";
+  author: PublicKey;
   votes: BN;
 };
 
@@ -24,53 +24,63 @@ const extendedButtonStyle = `${baseButtonStyle} px-2 rounded-md`;
 const tipStep = 1000 / LAMPORTS_PER_SOL;
 
 const programId = new PublicKey(process.env.NEXT_PUBLIC_PROGRAM_ID);
+console.log("programId:", programId);
 let dataAccount = Keypair.generate();
-console.log("dataAccount", dataAccount);
+console.log("dataAccount:", dataAccount);
 
 export const GalleryView: FC = ({}) => {
-  const [imageSubmissions, setImageSubmissions] = useState<Submission[]>([
-    // {
-    //   url: "https://i.giphy.com/media/eIG0HfouRQJQr1wBzz/giphy.webp",
-    //   author: new PublicKey("CQwU1maEsAUgnm4cvKr1mvztKkuER8q4eKPf3iyitXcG"),
-    // },
-  ]);
-  const [imageUrlInput, setImageUrlInput] = useState("");
-  const [votes, setVotes] = useState<{ [key: number]: number }>({});
-  const [imageBeingTipped, setImageBeingTipped] = useState<number | null>(null);
-  const [tipAmount, setTipAmount] = useState(tipStep);
-  const [initialized, setInitialized] = useState(false);
+  const [submissions, setSubmissions] = useState<Submission[]>([]);
+
+  const [userUrlInput, setUserUrlInput] = useState("");
+  const [submissionBeingTipped, setSubmissionBeingTipped] = useState<
+    number | null
+  >(null);
+  const [userTipInput, setUserTipInput] = useState(tipStep);
+
+  const [dataAccountInitialized, setDataAccountInitialized] = useState(false);
   const [program, setProgram] = useState<Program | null>(null);
   const [idl, setIdl] = useState<Idl | null>(null);
 
   const { connection } = useConnection();
   const wallet = useWallet();
-
   const provider = useMemo(
     () => new AnchorProvider(connection, wallet, {}),
     [connection, wallet]
   );
-
   const { publicKey: user, sendTransaction } = wallet;
 
-  function getVotes(index: number) {
-    return votes[index] ?? 0;
+  async function upvote(index: number) {
+    if (!program) {
+      console.error(`addLink: program is ${program}. Returning.`);
+    }
+
+    console.log(`Upvoting #${index}...`);
+    await program.methods
+      .upvoteSubmission(index)
+      .accounts({
+        dataAccount: dataAccount.publicKey,
+        user: provider.wallet.publicKey,
+      })
+      .rpc();
+
+    await fetchLinks();
   }
 
-  function vote(index: number, num: number) {
-    votes[index] = getVotes(index) + num;
-    setVotes({ ...votes });
-  }
+  async function downvote(index: number) {
+    if (!program) {
+      console.error(`addLink: program is ${program}. Returning.`);
+    }
 
-  function upvote(index: number) {
-    vote(index, 1);
-  }
+    console.log(`Downvoting #${index}...`);
+    await program.methods
+      .downvoteSubmission(index)
+      .accounts({
+        dataAccount: dataAccount.publicKey,
+        user: provider.wallet.publicKey,
+      })
+      .rpc();
 
-  function downvote(index: number) {
-    vote(index, -1);
-  }
-
-  function showTipUi(index: number) {
-    setImageBeingTipped(index);
+    await fetchLinks();
   }
 
   async function finalizeTip() {
@@ -80,14 +90,14 @@ export const GalleryView: FC = ({}) => {
       return;
     }
 
-    const recipient = imageSubmissions[imageBeingTipped].userAddress;
+    const recipient = submissions[submissionBeingTipped].author;
 
     await sendSol(
       connection,
       sendTransaction,
       user,
       recipient,
-      tipAmount * LAMPORTS_PER_SOL
+      userTipInput * LAMPORTS_PER_SOL
     );
   }
 
@@ -97,38 +107,69 @@ export const GalleryView: FC = ({}) => {
       return;
     }
 
-    console.log("Program ID:", programId);
-
+    console.log("fetchIdl: Fetching the IDL...");
     const idl = await Program.fetchIdl(programId, provider);
-    console.log("IDL:", idl);
+    console.log("fetchIdl: Successfully fetched the IDL!", idl);
+
     setIdl(idl);
   }
 
-  async function initialize() {
+  async function initializeDataAccount() {
     if (!program) {
-      console.error(`initialize: program is ${program}. Returning.`);
+      console.error(`initializeDataAccount: program is ${program}. Returning.`);
       return;
     }
 
-    const result = await program.methods
+    console.log("initializeDataAccount: Initializing...");
+    const initializationResult = await program.methods
       .initDataAccount()
       .accounts({
-        baseAccount: dataAccount.publicKey,
+        dataAccount: dataAccount.publicKey,
         user: provider.wallet.publicKey,
         systemProgram: SystemProgram.programId,
       })
       .signers([dataAccount])
       .rpc(/* { preflightCommitment: "processed" } */);
-    console.log("Initialization successful!", result);
-
-    console.log("user", user);
-    console.log("provider.wallet.publicKey", provider.wallet.publicKey);
     console.log(
-      "provider.wallet.publicKey === user",
-      provider.wallet.publicKey.toBase58() === user.toBase58()
+      "initializeDataAccount: Successfully initialized!",
+      initializationResult
     );
 
-    setInitialized(true);
+    setDataAccountInitialized(true);
+    await fetchLinks();
+  }
+
+  async function fetchLinks() {
+    if (!program) {
+      console.error(`fetchLinks: program is ${program}. Returning.`);
+    }
+
+    console.log("fetchLinks: Fetching the data account...");
+    const account = await program.account.dataAccount.fetch(
+      dataAccount.publicKey
+    );
+    if (!account) {
+      console.error(`fetchLinks: account is ${account}. Returning.`);
+    }
+    console.log("fetchLinks: Successfully fetched the data account!", account);
+
+    setSubmissions(account.submissions as Submission[]);
+  }
+
+  async function addSubmission(url: string) {
+    if (!program) {
+      console.log(`addSubmission: program is ${program}. Returning.`);
+    }
+
+    console.log(`addSubmission: Adding ${url}...`);
+    await program.methods
+      .addSubmission(url)
+      .accounts({
+        dataAccount: dataAccount.publicKey,
+        user: provider.wallet.publicKey,
+      })
+      .rpc();
+    console.log(`addSubmission: Successfully added ${url}!`);
 
     await fetchLinks();
   }
@@ -138,43 +179,18 @@ export const GalleryView: FC = ({}) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
-  async function fetchLinks() {
-    if (!program) {
-      console.log(`fetchLinks: program is ${program}. Returning.`);
-    }
-
-    const account = await program.account.baseAccount.fetch(
-      dataAccount.publicKey
-    );
-    if (!account) {
-      console.log(`fetchLinks: account is ${account}. Returning.`);
-    }
-
-    console.log("account:", account);
-    setImageSubmissions(account.imageUrlList as Submission[]);
-  }
-
   useEffect(() => {
-    if (idl && programId && provider) {
-      const program = new Program(idl, programId, provider);
-      setProgram(program);
-    } else
-      console.log({ idl: !!idl, programId: !!programId, provider: !!provider });
-  }, [idl, provider]);
+    if (!(idl && programId && provider)) {
+      console.log(
+        "useEffect: One or more vars are still missing. Next time..."
+      );
+      return;
+    }
 
-  async function addLink(url: string) {
     const program = new Program(idl, programId, provider);
-    console.log("Image URL", url);
-    await program.methods
-      .addImageUrl(url)
-      .accounts({
-        baseAccount: dataAccount.publicKey,
-        user: provider.wallet.publicKey,
-      })
-      .rpc();
-
-    await fetchLinks();
-  }
+    console.log("useEffect: Successfully initialized the program!", program);
+    setProgram(program);
+  }, [idl, provider]);
 
   return (
     <div className="md:hero mx-auto p-4">
@@ -182,10 +198,10 @@ export const GalleryView: FC = ({}) => {
         <h1 className="text-center text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-br from-indigo-500 to-fuchsia-500 mt-10 mb-8">
           Gallery
         </h1>
-        {!initialized ? (
+        {!dataAccountInitialized ? (
           <button
             className={`${baseButtonStyle} rounded-sm self-stretch`}
-            onClick={initialize}
+            onClick={initializeDataAccount}
           >
             Initialize
           </button>
@@ -197,28 +213,19 @@ export const GalleryView: FC = ({}) => {
                 onSubmit={async (e) => {
                   e.preventDefault();
                   try {
-                    const url = new URL(imageUrlInput).href;
-                    // setImageSubmissions([
-                    //   ...imageSubmissions,
-                    //   {
-                    //     url,
-                    //     author: new PublicKey(
-                    //       "CQwU1maEsAUgnm4cvKr1mvztKkuER8q4eKPf3iyitXcG"
-                    //     ),
-                    //   },
-                    // ]);
-                    await addLink(url);
+                    const url = new URL(userUrlInput).href;
+                    await addSubmission(url);
                   } catch (e) {
                     console.error("Image URL submission error:", e);
                   }
-                  setImageUrlInput("");
+                  setUserUrlInput("");
                 }}
               >
                 <input
                   placeholder="Image URL"
                   className="p-1 rounded-sm text-black"
-                  value={imageUrlInput}
-                  onChange={(e) => setImageUrlInput(e.target.value)}
+                  value={userUrlInput}
+                  onChange={(e) => setUserUrlInput(e.target.value)}
                 />
                 <input
                   type="submit"
@@ -226,7 +233,7 @@ export const GalleryView: FC = ({}) => {
                 />
               </form>
               <section className="flex flex-col gap-3">
-                {imageSubmissions.map((submission, i) => (
+                {submissions?.map((submission, i) => (
                   <article
                     key={i}
                     className="flex flex-col gap-1 items-center bg-gray-800 p-3 rounded-sm"
@@ -238,7 +245,7 @@ export const GalleryView: FC = ({}) => {
                       >
                         -
                       </button>{" "}
-                      {getVotes(i)}{" "}
+                      {submission.votes.toNumber()}{" "}
                       <button
                         onClick={() => upvote(i)}
                         className={`${extendedButtonStyle} text-xs`}
@@ -248,19 +255,19 @@ export const GalleryView: FC = ({}) => {
                     </p>
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
-                      src={submission.imageUrl}
+                      src={submission.url}
                       alt=""
                       className="w-40 rounded-md mb-1"
                     />
-                    {imageBeingTipped === i ? (
+                    {submissionBeingTipped === i ? (
                       <div className="flex gap-2 items-center">
                         <input
                           className="p-1 rounded-sm text-black h-7"
-                          value={tipAmount}
+                          value={userTipInput}
                           step={tipStep}
                           min={tipStep}
                           type="number"
-                          onChange={(e) => setTipAmount(+e.target.value)}
+                          onChange={(e) => setUserTipInput(+e.target.value)}
                         />
                         <button
                           onClick={finalizeTip}
@@ -272,7 +279,7 @@ export const GalleryView: FC = ({}) => {
                     ) : (
                       <button
                         className={`${extendedButtonStyle} text-md self-stretch`}
-                        onClick={() => showTipUi(i)}
+                        onClick={() => setSubmissionBeingTipped(i)}
                       >
                         Tip SOL
                       </button>

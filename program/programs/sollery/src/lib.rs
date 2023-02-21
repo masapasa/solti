@@ -7,60 +7,66 @@ declare_id!("5KeLPA4bsXnC9XxcVgAdKcFTNiYx74CHxa4FvLgBR2rU");
 pub mod sollery {
     use super::*;
 
-    pub fn init_data_account(ctx: Context<InitDataAccount>) -> Result<()> {
-        let base_account = &mut ctx.accounts.base_account;
-        base_account.image_url_count = 0;
+    pub fn init_data_account(context: Context<DataAccountContext>) -> Result<()> {
+        let data_account = &mut context.accounts.data_account;
+        data_account.submission_count = 0;
         Ok(())
     }
 
-    pub fn add_image_url(ctx: Context<AddImageUrl>, image_url: String) -> Result <()> {
-        let base_account = &mut ctx.accounts.base_account;
-        let user = &mut ctx.accounts.user;
+    pub fn add_submission(context: Context<SubmissionContext>, url: String) -> Result <()> {
+        let data_account = &mut context.accounts.data_account;
+        let user = &mut context.accounts.user;
 
-        let item = ItemStruct {
-            image_url: image_url.to_string(),
-            user_address: *user.to_account_info().key,
+        let submission = Submission {
+            url: url.to_string(),
+            author: *user.to_account_info().key,
             votes: 0
         };
 
-        base_account.image_url_list.push(item);
-        base_account.image_url_count += 1;
+        data_account.submissions.push(submission);
+        data_account.submission_count += 1;
         Ok(())
     }
 
-    pub fn upvote_image_url(ctx: Context<AddImageUrl>, index: u8) -> Result <()> {
-        let base_account = &mut ctx.accounts.base_account;
-        base_account.image_url_list[index as usize].votes += 1;
+    pub fn upvote_submission(context: Context<SubmissionContext>, index: u8) -> Result <()> {
+        let data_account = &mut context.accounts.data_account;
+        data_account.submissions[index as usize].votes += 1; // TODO: Check if there's actually something at the given index.
+        Ok(())
+    }
+
+    pub fn downvote_submission(context: Context<SubmissionContext>, index: u8) -> Result <()> {
+        let data_account = &mut context.accounts.data_account;
+        data_account.submissions[index as usize].votes -= 1; // TODO: Check if there's actually something at the given index.
         Ok(())
     }
 }
 
 #[derive(Accounts)]
-pub struct InitDataAccount<'info> {
+pub struct DataAccountContext<'info> {
     #[account(init, payer = user, space = 9000)]
-    pub base_account: Account<'info, BaseAccount>,
+    pub data_account: Account<'info, DataAccount>,
     #[account(mut)]
     pub user: Signer<'info>,
     pub system_program: Program<'info, System>,
 }
 
 #[derive(Accounts)]
-pub struct AddImageUrl<'info> {
+pub struct SubmissionContext<'info> {
     #[account(mut)]
-    pub base_account: Account<'info, BaseAccount>,
+    pub data_account: Account<'info, DataAccount>,
     #[account(mut)]
     pub user: Signer<'info>,
 }
 
 #[derive(Debug, Clone, AnchorSerialize, AnchorDeserialize)]
-pub struct ItemStruct {
-    pub image_url: String,
-    pub user_address: Pubkey,
+pub struct Submission {
+    pub url: String,
+    pub author: Pubkey,
     pub votes: u64,
 }
 
 #[account]
-pub struct BaseAccount {
-    pub image_url_count: u64,
-    pub image_url_list: Vec<ItemStruct>,
+pub struct DataAccount {
+    pub submission_count: u64,
+    pub submissions: Vec<Submission>,
 }
