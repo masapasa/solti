@@ -9,6 +9,7 @@ import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import { notify } from "../../utils/notifications";
 import { sendSol } from "utils/sendSol";
 import { AnchorProvider, BN, Idl, Program } from "@coral-xyz/anchor";
+import dataAccountSecretKey from "../../dataAccountSecretKey.json";
 
 // https://i.giphy.com/media/eIG0HfouRQJQr1wBzz/giphy.webp
 
@@ -25,7 +26,9 @@ const tipStep = 1000 / LAMPORTS_PER_SOL;
 
 const programId = new PublicKey(process.env.NEXT_PUBLIC_PROGRAM_ID);
 console.log("programId:", programId);
-let dataAccount = Keypair.generate();
+
+// const generatedDataAccount = Keypair.generate();
+const dataAccount = Keypair.fromSecretKey(new Uint8Array(dataAccountSecretKey));
 console.log("dataAccount:", dataAccount);
 
 export const GalleryView: FC = ({}) => {
@@ -37,7 +40,7 @@ export const GalleryView: FC = ({}) => {
   >(null);
   const [userTipInput, setUserTipInput] = useState(tipStep);
 
-  const [dataAccountInitialized, setDataAccountInitialized] = useState(false);
+  const [dataAccountInitialized, setDataAccountInitialized] = useState(!false);
   const [program, setProgram] = useState<Program | null>(null);
   const [idl, setIdl] = useState<Idl | null>(null);
 
@@ -142,6 +145,7 @@ export const GalleryView: FC = ({}) => {
   async function fetchLinks() {
     if (!program) {
       console.error(`fetchLinks: program is ${program}. Returning.`);
+      return;
     }
 
     console.log("fetchLinks: Fetching the data account...");
@@ -150,6 +154,7 @@ export const GalleryView: FC = ({}) => {
     );
     if (!account) {
       console.error(`fetchLinks: account is ${account}. Returning.`);
+      return;
     }
     console.log("fetchLinks: Successfully fetched the data account!", account);
 
@@ -178,6 +183,11 @@ export const GalleryView: FC = ({}) => {
     fetchIdl();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
+
+  useEffect(() => {
+    if (program) fetchLinks();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [program]);
 
   useEffect(() => {
     if (!(idl && programId && provider)) {

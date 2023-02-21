@@ -8,7 +8,8 @@
     "dev": "sh scripts/dev-with-program-id.sh",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "generate-data-account": "solana-keygen new --no-bip39-passphrase -o src/dataAccount.json"
   },
   "dependencies": {
     "@coral-xyz/anchor": "^0.26.0",
