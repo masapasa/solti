@@ -31,3 +31,5 @@ To get started, just add your code to **programs_py/calculator.py** and run `sea
 ```shell
 $ seahorse build
 ```
+
+`seahorse build` fails the first time. Running it a 2nd time (or just `anchor build`) fixes the issue. That's why there's a `;`, not a `&&` between `seahorse build` and `anchor build` in [package.json](package.json)

@@ -13,7 +13,7 @@ use anchor_spl::{
 use dot::program::*;
 use std::{cell::RefCell, rc::Rc};
 
-declare_id!("GnMaCHWtpefi5VA5K1KK14sV4aHFE2Bczi8DsuhaEY4Z");
+declare_id!("C9hWnqFj3Q6yNLAJiUyKN2Vrq7trJCa6qqZ7cB9wVXR");
 
 pub mod seahorse_util {
     use super::*;
@@ -167,4 +167,93 @@ mod calculator {
     use super::*;
     use seahorse_util::*;
     use std::collections::HashMap;
+
+    #[derive(Accounts)]
+    # [instruction (op : Operation , num : i64)]
+    pub struct DoOperation<'info> {
+        #[account(mut)]
+        pub owner: Signer<'info>,
+        #[account(mut)]
+        pub calculator: Box<Account<'info, dot::program::Calculator>>,
+    }
+
+    pub fn do_operation(ctx: Context<DoOperation>, op: Operation, num: i64) -> Result<()> {
+        let mut programs = HashMap::new();
+        let programs_map = ProgramsMap(programs);
+        let owner = SeahorseSigner {
+            account: &ctx.accounts.owner,
+            programs: &programs_map,
+        };
+
+        let calculator =
+            dot::program::Calculator::load(&mut ctx.accounts.calculator, &programs_map);
+
+        do_operation_handler(owner.clone(), calculator.clone(), op, num);
+
+        dot::program::Calculator::store(calculator);
+
+        return Ok(());
+    }
+
+    #[derive(Accounts)]
+    pub struct InitCalculator<'info> {
+        #[account(mut)]
+        pub owner: Signer<'info>,
+        # [account (init , space = std :: mem :: size_of :: < dot :: program :: Calculator > () + 8 , payer = owner , seeds = ["Calculator" . as_bytes () . as_ref () , owner . key () . as_ref ()] , bump)]
+        pub calculator: Box<Account<'info, dot::program::Calculator>>,
+        pub rent: Sysvar<'info, Rent>,
+        pub system_program: Program<'info, System>,
+    }
+
+    pub fn init_calculator(ctx: Context<InitCalculator>) -> Result<()> {
+        let mut programs = HashMap::new();
+
+        programs.insert(
+            "system_program",
+            ctx.accounts.system_program.to_account_info(),
+        );
+
+        let programs_map = ProgramsMap(programs);
+        let owner = SeahorseSigner {
+            account: &ctx.accounts.owner,
+            programs: &programs_map,
+        };
+
+        let calculator = Empty {
+            account: dot::program::Calculator::load(&mut ctx.accounts.calculator, &programs_map),
+            bump: ctx.bumps.get("calculator").map(|bump| *bump),
+        };
+
+        init_calculator_handler(owner.clone(), calculator.clone());
+
+        dot::program::Calculator::store(calculator.account);
+
+        return Ok(());
+    }
+
+    #[derive(Accounts)]
+    pub struct ResetCalculator<'info> {
+        #[account(mut)]
+        pub owner: Signer<'info>,
+        #[account(mut)]
+        pub calculator: Box<Account<'info, dot::program::Calculator>>,
+    }
+
+    pub fn reset_calculator(ctx: Context<ResetCalculator>) -> Result<()> {
+        let mut programs = HashMap::new();
+        let programs_map = ProgramsMap(programs);
+        let owner = SeahorseSigner {
+            account: &ctx.accounts.owner,
+            programs: &programs_map,
+        };
+
+        let calculator =
+            dot::program::Calculator::load(&mut ctx.accounts.calculator, &programs_map);
+
+        reset_calculator_handler(owner.clone(), calculator.clone());
+
+        dot::program::Calculator::store(calculator);
+
+        return Ok(());
+    }
 }

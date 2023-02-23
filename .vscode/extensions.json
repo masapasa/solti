@@ -1,3 +1,7 @@
 {
-  "recommendations": ["yzhang.markdown-all-in-one", "tamasfe.even-better-toml"]
+  "recommendations": [
+    "yzhang.markdown-all-in-one",
+    "tamasfe.even-better-toml",
+    "ms-python.vscode-pylance"
+  ]
 }

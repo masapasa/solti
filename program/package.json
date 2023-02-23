@@ -15,8 +15,8 @@
     "idl:upgrade:calculator": "anchor idl upgrade  -f target/idl/calculator.json `solana address -k target/deploy/calculator-keypair.json`",
     "idl:init:both": "npm run idl:init:sollery && npm run idl:init:calculator",
     "idl:upgrade:both": "npm run idl:upgrade:sollery && npm run idl:upgrade:calculator",
-    "project:init": "rm -fr target && seahorse build && anchor build && anchor deploy && npm run id:both && anchor build && anchor deploy && npm run idl:init:both && cd ../app && npm run generate-data-account",
-    "project:upgrade": "seahorse build && anchor build && anchor deploy && npm run idl:upgrade:both",
+    "project:init": "rm -fr target && seahorse build; anchor build && anchor deploy && npm run id:both && anchor build && anchor deploy && npm run idl:init:both && cd ../app && npm run generate-data-account",
+    "project:upgrade": "seahorse build; anchor build && anchor deploy && npm run idl:upgrade:both",
     "airdrop": "solana airdrop 2"
   },
   "dependencies": {
