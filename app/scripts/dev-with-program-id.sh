@@ -1,1 +1,1 @@
-NEXT_PUBLIC_PROGRAM_ID=`solana address -k ../program/target/deploy/sollery-keypair.json` NEXT_PUBLIC_CALCULATOR_PROGRAM_ID=`solana address -k ../program/target/deploy/sollery-keypair.json` next dev
+NEXT_PUBLIC_PROGRAM_ID=`solana address -k ../program/target/deploy/sollery-keypair.json` NEXT_PUBLIC_CALCULATOR_PROGRAM_ID=`solana address -k ../program/target/deploy/calculator-keypair.json` next dev
