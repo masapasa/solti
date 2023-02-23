@@ -1,7 +1,7 @@
 use anchor_lang::prelude::*;
 
 // Need to update this ID after the first deployment to localnet (e.g. by running scripts/update-lib-rs.sh).
-declare_id!("5KSTW7o5W3XhsDxcRU4FCAhUbVB5mVejyPF7Xc343ysM");
+declare_id!("9wRLRfBSkry5ZLs5LUR2xikq6NcPNSVjwdVQ7y4i1V7v");
 
 #[program]
 pub mod sollery {

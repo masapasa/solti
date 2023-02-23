@@ -9,14 +9,18 @@
     "test:reuse": "anchor run test",
     "test:new": "anchor test",
     "get-program-id": "solana address -k target/deploy/sollery-keypair.json",
-    "idl:init": "anchor idl init  -f target/idl/*.json `solana address -k target/deploy/*-keypair.json`",
-    "idl:upgrade": "anchor idl upgrade  -f target/idl/*.json `solana address -k target/deploy/*-keypair.json`",
-    "project:init": "rm -fr target && anchor build && anchor deploy && npm run id:both && anchor build && anchor deploy && npm run idl:init && cd ../app && npm run generate-data-account",
-    "project:upgrade": "anchor build && anchor deploy && npm run idl:upgrade",
+    "idl:init:sollery": "anchor idl init  -f target/idl/sollery.json `solana address -k target/deploy/sollery-keypair.json`",
+    "idl:upgrade:sollery": "anchor idl upgrade  -f target/idl/sollery.json `solana address -k target/deploy/sollery-keypair.json`",
+    "idl:init:calculator": "anchor idl init  -f target/idl/calculator.json `solana address -k target/deploy/calculator-keypair.json`",
+    "idl:upgrade:calculator": "anchor idl upgrade  -f target/idl/calculator.json `solana address -k target/deploy/calculator-keypair.json`",
+    "idl:init:both": "npm run idl:init:sollery && npm run idl:init:calculator",
+    "idl:upgrade:both": "npm run idl:upgrade:sollery && npm run idl:upgrade:calculator",
+    "project:init": "rm -fr target && anchor build && anchor deploy && npm run id:both && anchor build && anchor deploy && npm run idl:init:both && cd ../app && npm run generate-data-account",
+    "project:upgrade": "anchor build && anchor deploy && npm run idl:upgrade:both",
     "airdrop": "solana airdrop 2"
   },
   "dependencies": {
-    "@project-serum/anchor": "^0.24.2"
+    "@coral-xyz/anchor": "^0.26.0"
   },
   "devDependencies": {
     "@types/bn.js": "^5.1.0",
