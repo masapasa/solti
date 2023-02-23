@@ -3,4 +3,4 @@
 
 from seahorse.prelude import *
 
-declare_id('Fg6PaFpoGXkYsidMpWTK6W2BeZ7FEfcYkg476zPFsLnS')
+declare_id('GnMaCHWtpefi5VA5K1KK14sV4aHFE2Bczi8DsuhaEY4Z')
