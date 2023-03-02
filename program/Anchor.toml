@@ -3,16 +3,16 @@ seeds = false
 skip-lint = false
 [programs.localnet]
 # Need to update these IDs after the first deployment to localnet (e.g. by running scripts/update-anchor-toml.sh).
-sollery = "9bXtd77Nw7XhtKyuqQumNskE19PLsmzQkBBQgJevMTcW"
-calculator = "C9hWnqFj3Q6yNLAJiUyKN2Vrq7trJCa6qqZ7cB9wVXR"
+sollery = "25to815MeTgAP5q87EkbSFqBh1XgL2AR6DZwHNKyEGkX"
+calculator = "F71MP2c2WXJC6mMpCk3TdCjGRekmRVQ9foEqzPkz9ZCL"
 
 [registry]
 #url = "https://anchor.projectserum.com"
 url = "https://api.apr.dev"
 
 [provider]
-cluster = "localnet"
-# cluster = "devnet"
+# cluster = "localnet"
+cluster = "devnet"
 wallet = "~/.config/solana/id.json" # Changed from '/Users/<user>' to '~'
 
 [scripts]

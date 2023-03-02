@@ -3,7 +3,7 @@
 
 from seahorse.prelude import *
 
-declare_id('C9hWnqFj3Q6yNLAJiUyKN2Vrq7trJCa6qqZ7cB9wVXR')
+declare_id('F71MP2c2WXJC6mMpCk3TdCjGRekmRVQ9foEqzPkz9ZCL')
 
 
 class Calculator(Account):
