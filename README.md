@@ -1,4 +1,4 @@
-# sollery
+# Solvation
 
 [app](app/README.md) (the Next.js application) and [program](app/README.md) (the Solana backend) have their own READMEs.
 

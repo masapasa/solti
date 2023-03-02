@@ -1,5 +1,3 @@
-import { FC } from "react";
-import Link from "next/link";
 import Text from "./Text";
 import NavElement from "./nav-element";
 interface Props {
@@ -10,7 +8,7 @@ export const ContentContainer: React.FC<Props> = ({ children }) => {
   return (
     <div className="flex-1 drawer h-52">
       <input id="my-drawer" type="checkbox" className="grow drawer-toggle" />
-      <div className="items-center  drawer-content">{children}</div>
+      <div className="flex justify-center drawer-content">{children}</div>
       {/* SideBar / Drawer */}
       <div className="drawer-side">
         <label htmlFor="my-drawer" className="drawer-overlay gap-6"></label>
@@ -32,9 +30,6 @@ export const ContentContainer: React.FC<Props> = ({ children }) => {
           </li>
           <li>
             <NavElement label="Gallery" href="/gallery" />
-          </li>
-          <li>
-            <NavElement label="Social" href="/social" />
           </li>
         </ul>
       </div>

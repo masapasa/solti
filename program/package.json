@@ -1,4 +1,9 @@
 {
+  "name": "solvation-program",
+  "version": "0.0.1",
+  "author": "ilovehackathons <106395723+ilovehackathons@users.noreply.github.com>",
+  "license": "MIT",
+  "private": false,
   "scripts": {
     "lint:fix": "prettier */*.js \"*/**/*{.js,.ts}\" -w",
     "lint": "prettier */*.js \"*/**/*{.js,.ts}\" --check",

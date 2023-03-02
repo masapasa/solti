@@ -1,7 +1,7 @@
 {
-  "name": "solana-dapp-next",
-  "version": "0.2.0",
-  "author": "Solana Maintainers <maintainers@solana.foundation>",
+  "name": "solvation-app",
+  "version": "0.0.1",
+  "author": "ilovehackathons <106395723+ilovehackathons@users.noreply.github.com>",
   "license": "MIT",
   "private": false,
   "scripts": {
