@@ -47,7 +47,14 @@ pub mod sollery {
 
 #[derive(Accounts)]
 pub struct DataAccountContext<'info> {
-    #[account(init, payer = user, space = 9000)]
+    #[account(
+        init,
+        seeds = [user.key().as_ref()],
+        bump,
+        payer = user,
+        space = 9000
+    )]
+    // #[account(init, payer = user, space = 9000)]
     pub data_account: Account<'info, DataAccount>,
     #[account(mut)]
     pub user: Signer<'info>,

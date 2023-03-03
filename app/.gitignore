@@ -39,4 +39,4 @@ yarn-error.log*
 # logs
 *.log
 
-dataAccountSecretKey.json
+# dataAccountSecretKey.json

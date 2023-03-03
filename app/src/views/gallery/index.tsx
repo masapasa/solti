@@ -10,9 +10,9 @@ import { notify } from "../../utils/notifications";
 import { sendSol } from "utils/sendSol";
 import { AnchorProvider, BN, Idl, Program } from "@coral-xyz/anchor";
 // import dataAccountSecretKey from "../../dataAccountSecretKey.json";
-const dataAccountSecretKey = JSON.parse(
-  process.env.NEXT_PUBLIC_DATA_ACCOUNT_SECRET_KEY
-);
+// const dataAccountSecretKey = JSON.parse(
+//   process.env.NEXT_PUBLIC_DATA_ACCOUNT_SECRET_KEY
+// );
 
 // https://i.giphy.com/media/eIG0HfouRQJQr1wBzz/giphy.webp
 
@@ -31,7 +31,8 @@ const programId = new PublicKey(process.env.NEXT_PUBLIC_PROGRAM_ID);
 console.log("programId:", programId);
 
 // const generatedDataAccount = Keypair.generate();
-const dataAccount = Keypair.fromSecretKey(new Uint8Array(dataAccountSecretKey));
+// const storedDataAccount = Keypair.fromSecretKey(new Uint8Array(dataAccountSecretKey));
+const dataAccount = Keypair.fromSeed(new Uint8Array(programId.toBytes()));
 console.log("dataAccount:", dataAccount);
 
 export const GalleryView: FC = ({}) => {
