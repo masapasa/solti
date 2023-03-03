@@ -9,7 +9,10 @@ import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import { notify } from "../../utils/notifications";
 import { sendSol } from "utils/sendSol";
 import { AnchorProvider, BN, Idl, Program } from "@coral-xyz/anchor";
-import dataAccountSecretKey from "../../dataAccountSecretKey.json";
+// import dataAccountSecretKey from "../../dataAccountSecretKey.json";
+const dataAccountSecretKey = JSON.parse(
+  process.env.NEXT_PUBLIC_DATA_ACCOUNT_SECRET_KEY
+);
 
 // https://i.giphy.com/media/eIG0HfouRQJQr1wBzz/giphy.webp
 
