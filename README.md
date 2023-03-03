@@ -1,5 +1,7 @@
 # Solvation
 
+See it live on [https://solvation.vercel.app/](https://solvation.vercel.app/)!
+
 [app](app/README.md) (the Next.js application) and [program](app/README.md) (the Solana backend) have their own READMEs.
 
 ## Quick start
