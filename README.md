@@ -4,6 +4,23 @@
 
 ## Quick start
 
+```shell
+solana airdrop 2
+solana airdrop 2
+solana airdrop 2
+solana airdrop 2
+solana balance # 8 SOL
+git clone https://github.com/ilovehackathons/solvation
+cd solvation/program
+npm run project:init
+solana balance # 1.52514244 SOL
+cd ../app
+npm i
+npm run dev
+```
+
+## Quick start (legacy)
+
 ### Terminal 1 (localnet only)
 
 Only needed if `cluster = "localnet"` in [Anchor.toml](program/Anchor.toml).
@@ -25,6 +42,12 @@ cd app && npm i && npm run dev
 ```
 
 ## For debugging only
+
+### Need a new keypair for testing?
+
+```shell
+solana-keygen new -f --no-bip39-passphrase # Careful, this command overwrites your existing keypair at ~/.config/solana/id.json.
+```
 
 ### Generate a project template
 
