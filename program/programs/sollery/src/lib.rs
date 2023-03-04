@@ -9,7 +9,7 @@ pub mod sollery {
 
     pub fn init_data_account(context: Context<DataAccountContext>, url: String) -> Result<()> {
         let data_account = &mut context.accounts.data_account;
-        data_account.submission_count = 0;
+        // data_account.submission_count = 0;
 
         let user = &mut context.accounts.user;
         let submission = Submission {
@@ -18,7 +18,7 @@ pub mod sollery {
             votes: 0,
         };
         data_account.submissions.push(submission);
-        data_account.submission_count += 1;
+        // data_account.submission_count += 1;
 
         Ok(())
     }
@@ -34,9 +34,9 @@ pub mod sollery {
         };
 
         // TODO: Is this needed?
-        if data_account.submission_count < u8::MAX - 1 {
+        if data_account.submissions.len() < usize::MAX - 1 {
             data_account.submissions.push(submission);
-            data_account.submission_count += 1;
+            // data_account.submission_count += 1;
         }
 
         Ok(())
@@ -45,7 +45,7 @@ pub mod sollery {
     pub fn upvote_submission(context: Context<SubmissionContext>, index: u8) -> Result<()> {
         let data_account = &mut context.accounts.data_account;
         // TODO: Does the if statement bloat the program?
-        if index < data_account.submission_count {
+        if usize::from(index) < data_account.submissions.len() {
             data_account.submissions[index as usize].votes += 1;
         }
         Ok(())
@@ -54,7 +54,7 @@ pub mod sollery {
     pub fn downvote_submission(context: Context<SubmissionContext>, index: u8) -> Result<()> {
         let data_account = &mut context.accounts.data_account;
         // TODO: Does the if statement bloat the program?
-        if index < data_account.submission_count {
+        if usize::from(index) < data_account.submissions.len() {
             data_account.submissions[index as usize].votes -= 1;
         }
         Ok(())
@@ -67,7 +67,7 @@ pub struct DataAccountContext<'info> {
     #[account(
         init,
         // seeds = [user.key().as_ref()],
-        seeds = [b"5"],
+        seeds = [b"6"],
         bump,
         payer = user,
         space = 9000
@@ -88,7 +88,7 @@ pub struct SubmissionContext<'info> {
 
 #[account]
 pub struct DataAccount {
-    pub submission_count: u8,
+    // pub submission_count: u8,
     pub submissions: Vec<Submission>,
 }
 

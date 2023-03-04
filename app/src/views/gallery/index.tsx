@@ -30,7 +30,7 @@ console.log("programId:", programId);
 // const dataAccount = Keypair.fromSeed(new Uint8Array(programId.toBytes()));
 // console.log("dataAccount:", dataAccount);
 
-const [pda] = PublicKey.findProgramAddressSync([Buffer.from("5")], programId);
+const [pda] = PublicKey.findProgramAddressSync([Buffer.from("6")], programId);
 console.log("PDA:", pda);
 
 export const GalleryView: FC = ({}) => {
