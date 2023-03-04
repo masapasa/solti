@@ -1,10 +1,5 @@
 import { FC, useEffect, useMemo, useState } from "react";
-import {
-  Keypair,
-  LAMPORTS_PER_SOL,
-  PublicKey,
-  SystemProgram,
-} from "@solana/web3.js";
+import { LAMPORTS_PER_SOL, PublicKey } from "@solana/web3.js";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import { notify } from "../../utils/notifications";
 import { sendSol } from "utils/sendSol";
@@ -135,8 +130,8 @@ export const GalleryView: FC = ({}) => {
       .initDataAccount()
       .accounts({
         dataAccount: pda,
-        user: provider.wallet.publicKey,
-        systemProgram: SystemProgram.programId,
+        // user: provider.wallet.publicKey,
+        // systemProgram: SystemProgram.programId,
       })
       // .signers([dataAccount])
       .rpc(/* { preflightCommitment: "processed" } */);
@@ -183,7 +178,7 @@ export const GalleryView: FC = ({}) => {
 
     console.log(`addSubmission: Adding ${url}...`);
     await program.methods
-      .addSubmission(url)
+      .addSubmission(url) // TODO: Send initDataAccount and addSubmission at the same time (one confirmation dialog)?
       .accounts({
         dataAccount: pda,
         // user: provider.wallet.publicKey,
