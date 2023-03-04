@@ -13,7 +13,7 @@ const WalletMultiButtonDynamic = dynamic(
   { ssr: false }
 );
 
-export const AppBar: React.FC = () => {
+export const AppBar: FC = () => {
   const { autoConnect, setAutoConnect } = useAutoConnect();
   const [isNavOpen, setIsNavOpen] = useState(false);
   return (
@@ -33,7 +33,7 @@ export const AppBar: React.FC = () => {
             <a
               href="https://github.com/ilovehackathons/solvation"
               target="blank"
-              rel="noreferrer noopener"
+              rel="noreferrer"
               type="button"
               className="border-white text-secondary hover:text-white leading-normal hover:bg-black hover:bg-opacity-5 focus:outline-none focus:ring-0 transition duration-150 ease-in-out m-1 ml-2"
             >
