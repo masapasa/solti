@@ -3,43 +3,37 @@ use anchor_lang::prelude::*;
 // Need to update this ID after the first deployment to localnet (e.g. by running scripts/update-lib-rs.sh).
 declare_id!("25to815MeTgAP5q87EkbSFqBh1XgL2AR6DZwHNKyEGkX");
 
+fn add(data_account: &mut Account<DataAccount>, user: &mut Signer, url: String) -> Result<()> {
+    let submission = Submission {
+        url: url.to_string(),
+        author: *user.to_account_info().key,
+        votes: 0,
+    };
+
+    // TODO: Is this needed?
+    if data_account.submissions.len() < usize::MAX - 1 {
+        data_account.submissions.push(submission);
+    }
+
+    Ok(())
+}
+
 #[program]
 pub mod sollery {
     use super::*;
 
     pub fn init_data_account(context: Context<DataAccountContext>, url: String) -> Result<()> {
         let data_account = &mut context.accounts.data_account;
-        // data_account.submission_count = 0;
-
         let user = &mut context.accounts.user;
-        let submission = Submission {
-            url: url.to_string(),
-            author: *user.to_account_info().key,
-            votes: 0,
-        };
-        data_account.submissions.push(submission);
-        // data_account.submission_count += 1;
 
-        Ok(())
+        return add(data_account, user, url);
     }
 
     pub fn add_submission(context: Context<SubmissionContext>, url: String) -> Result<()> {
         let data_account = &mut context.accounts.data_account;
         let user = &mut context.accounts.user;
 
-        let submission = Submission {
-            url: url.to_string(),
-            author: *user.to_account_info().key,
-            votes: 0,
-        };
-
-        // TODO: Is this needed?
-        if data_account.submissions.len() < usize::MAX - 1 {
-            data_account.submissions.push(submission);
-            // data_account.submission_count += 1;
-        }
-
-        Ok(())
+        return add(data_account, user, url);
     }
 
     pub fn upvote_submission(context: Context<SubmissionContext>, index: u8) -> Result<()> {
@@ -67,7 +61,7 @@ pub struct DataAccountContext<'info> {
     #[account(
         init,
         // seeds = [user.key().as_ref()],
-        seeds = [b"6"],
+        seeds = [b"7"],
         bump,
         payer = user,
         space = 9000
@@ -88,7 +82,6 @@ pub struct SubmissionContext<'info> {
 
 #[account]
 pub struct DataAccount {
-    // pub submission_count: u8,
     pub submissions: Vec<Submission>,
 }
 
