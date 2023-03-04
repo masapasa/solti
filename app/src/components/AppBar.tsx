@@ -24,14 +24,14 @@ export const AppBar: FC = () => {
           <div className="hidden sm:inline w-22 h-22 md:p-2 ml-10">
             <Link href="/" passHref>
               <span className="bg-gradient-to-br from-indigo-500 to-fuchsia-500 bg-clip-text text-transparent text-4xl font-bold">
-                Solvation
+                {pkg.name[0].toUpperCase() + pkg.name.slice(1)}
               </span>
             </Link>
             <sup className="text-xl ml-2 font-normal align-bottom text-right text-slate-600 mt-4">
               {pkg.version}
             </sup>
             <a
-              href="https://github.com/ilovehackathons/solvation"
+              href={pkg.repository.url}
               target="blank"
               rel="noreferrer"
               type="button"
