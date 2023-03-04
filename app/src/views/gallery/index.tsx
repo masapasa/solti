@@ -30,7 +30,7 @@ console.log("programId:", programId);
 // const dataAccount = Keypair.fromSeed(new Uint8Array(programId.toBytes()));
 // console.log("dataAccount:", dataAccount);
 
-const [pda] = PublicKey.findProgramAddressSync([Buffer.from("4")], programId);
+const [pda] = PublicKey.findProgramAddressSync([Buffer.from("5")], programId);
 console.log("PDA:", pda);
 
 export const GalleryView: FC = ({}) => {
@@ -143,6 +143,7 @@ export const GalleryView: FC = ({}) => {
         "fetchSubmissions: Need to initialize the data account first."
       );
       setDataAccountInitialized(false);
+      setSubmissions([]);
     }
   }
 
