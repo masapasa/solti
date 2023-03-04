@@ -39,17 +39,14 @@ pub mod sollery {
         data_account.submissions[index as usize].votes -= 1; // TODO: Check if there's actually something at the given index.
         Ok(())
     }
-
-    // pub fn noop() -> Result <()> {
-    //     Ok(())
-    // }
 }
 
 #[derive(Accounts)]
 pub struct DataAccountContext<'info> {
     #[account(
         init,
-        seeds = [user.key().as_ref()],
+        // seeds = [user.key().as_ref()],
+        seeds = [b""],
         bump,
         payer = user,
         space = 9000
@@ -73,7 +70,7 @@ pub struct SubmissionContext<'info> {
 pub struct Submission {
     pub url: String,
     pub author: Pubkey,
-    pub votes: u64,
+    pub votes: i64,
 }
 
 #[account]

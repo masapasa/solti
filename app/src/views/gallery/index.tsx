@@ -32,8 +32,11 @@ console.log("programId:", programId);
 
 // const generatedDataAccount = Keypair.generate();
 // const storedDataAccount = Keypair.fromSecretKey(new Uint8Array(dataAccountSecretKey));
-const dataAccount = Keypair.fromSeed(new Uint8Array(programId.toBytes()));
-console.log("dataAccount:", dataAccount);
+// const dataAccount = Keypair.fromSeed(new Uint8Array(programId.toBytes()));
+// console.log("dataAccount:", dataAccount);
+
+const [pda] = PublicKey.findProgramAddressSync([Buffer.from("")], programId);
+console.log("PDA:", pda);
 
 export const GalleryView: FC = ({}) => {
   const [submissions, setSubmissions] = useState<Submission[]>([]);
@@ -65,8 +68,8 @@ export const GalleryView: FC = ({}) => {
     await program.methods
       .upvoteSubmission(index)
       .accounts({
-        dataAccount: dataAccount.publicKey,
-        user: provider.wallet.publicKey,
+        dataAccount: pda,
+        //   user: provider.wallet.publicKey,
       })
       .rpc();
 
@@ -82,8 +85,8 @@ export const GalleryView: FC = ({}) => {
     await program.methods
       .downvoteSubmission(index)
       .accounts({
-        dataAccount: dataAccount.publicKey,
-        user: provider.wallet.publicKey,
+        dataAccount: pda,
+        // user: provider.wallet.publicKey,
       })
       .rpc();
 
@@ -131,11 +134,11 @@ export const GalleryView: FC = ({}) => {
     const initializationResult = await program.methods
       .initDataAccount()
       .accounts({
-        dataAccount: dataAccount.publicKey,
+        dataAccount: pda,
         user: provider.wallet.publicKey,
         systemProgram: SystemProgram.programId,
       })
-      .signers([dataAccount])
+      // .signers([dataAccount])
       .rpc(/* { preflightCommitment: "processed" } */);
     console.log(
       "initializeDataAccount: Successfully initialized!",
@@ -154,9 +157,7 @@ export const GalleryView: FC = ({}) => {
 
     console.log("fetchSubmissions: Fetching the data account...");
     try {
-      const account = await program.account.dataAccount.fetch(
-        dataAccount.publicKey
-      );
+      const account = await program.account.dataAccount.fetch(pda);
       if (!account) {
         console.error(`fetchSubmissions: account is ${account}. Returning.`);
         return;
@@ -184,8 +185,8 @@ export const GalleryView: FC = ({}) => {
     await program.methods
       .addSubmission(url)
       .accounts({
-        dataAccount: dataAccount.publicKey,
-        user: provider.wallet.publicKey,
+        dataAccount: pda,
+        // user: provider.wallet.publicKey,
       })
       .rpc();
     console.log(`addSubmission: Successfully added ${url}!`);
