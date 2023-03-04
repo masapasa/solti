@@ -30,7 +30,7 @@ console.log("programId:", programId);
 // const dataAccount = Keypair.fromSeed(new Uint8Array(programId.toBytes()));
 // console.log("dataAccount:", dataAccount);
 
-const [pda] = PublicKey.findProgramAddressSync([Buffer.from("")], programId);
+const [pda] = PublicKey.findProgramAddressSync([Buffer.from("4")], programId);
 console.log("PDA:", pda);
 
 export const GalleryView: FC = ({}) => {
@@ -42,7 +42,7 @@ export const GalleryView: FC = ({}) => {
   >(null);
   const [userTipInput, setUserTipInput] = useState(tipStep);
 
-  const [dataAccountInitialized, setDataAccountInitialized] = useState(!false);
+  const [dataAccountInitialized, setDataAccountInitialized] = useState(true);
   const [program, setProgram] = useState<Program | null>(null);
   const [idl, setIdl] = useState<Idl | null>(null);
 
@@ -119,31 +119,6 @@ export const GalleryView: FC = ({}) => {
     setIdl(idl);
   }
 
-  async function initializeDataAccount() {
-    if (!program) {
-      console.error(`initializeDataAccount: program is ${program}. Returning.`);
-      return;
-    }
-
-    console.log("initializeDataAccount: Initializing...");
-    const initializationResult = await program.methods
-      .initDataAccount()
-      .accounts({
-        dataAccount: pda,
-        // user: provider.wallet.publicKey,
-        // systemProgram: SystemProgram.programId,
-      })
-      // .signers([dataAccount])
-      .rpc(/* { preflightCommitment: "processed" } */);
-    console.log(
-      "initializeDataAccount: Successfully initialized!",
-      initializationResult
-    );
-
-    setDataAccountInitialized(true);
-    await fetchSubmissions();
-  }
-
   async function fetchSubmissions() {
     if (!program) {
       console.error(`fetchSubmissions: program is ${program}. Returning.`);
@@ -177,13 +152,20 @@ export const GalleryView: FC = ({}) => {
     }
 
     console.log(`addSubmission: Adding ${url}...`);
-    await program.methods
-      .addSubmission(url) // TODO: Send initDataAccount and addSubmission at the same time (one confirmation dialog)?
+
+    await program.methods[
+      dataAccountInitialized ? "addSubmission" : "initDataAccount"
+    ](url)
       .accounts({
         dataAccount: pda,
         // user: provider.wallet.publicKey,
       })
       .rpc();
+    if (!dataAccountInitialized) {
+      setDataAccountInitialized(true);
+      console.log("addSubmission: Successfully initialized!");
+    }
+
     console.log(`addSubmission: Successfully added ${url}!`);
 
     await fetchSubmissions();
@@ -220,13 +202,6 @@ export const GalleryView: FC = ({}) => {
         </h1>
         {!wallet.connected ? (
           <p className="text-2xl">Wallet not connected.</p>
-        ) : !dataAccountInitialized ? (
-          <button
-            className={`${baseButtonStyle} rounded-sm self-stretch`}
-            onClick={initializeDataAccount}
-          >
-            Initialize
-          </button>
         ) : (
           <div className="text-center">
             <section className="flex flex-col gap-9 items-center">

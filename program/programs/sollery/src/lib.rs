@@ -7,9 +7,19 @@ declare_id!("25to815MeTgAP5q87EkbSFqBh1XgL2AR6DZwHNKyEGkX");
 pub mod sollery {
     use super::*;
 
-    pub fn init_data_account(context: Context<DataAccountContext>) -> Result<()> {
+    pub fn init_data_account(context: Context<DataAccountContext>, url: String) -> Result<()> {
         let data_account = &mut context.accounts.data_account;
         data_account.submission_count = 0;
+
+        let user = &mut context.accounts.user;
+        let submission = Submission {
+            url: url.to_string(),
+            author: *user.to_account_info().key,
+            votes: 0
+        };
+        data_account.submissions.push(submission);
+        data_account.submission_count += 1;
+
         Ok(())
     }
 
@@ -43,15 +53,15 @@ pub mod sollery {
 
 #[derive(Accounts)]
 pub struct DataAccountContext<'info> {
+    // #[account(init, payer = user, space = 9000)]
     #[account(
         init,
         // seeds = [user.key().as_ref()],
-        seeds = [b""],
+        seeds = [b"4"],
         bump,
         payer = user,
         space = 9000
     )]
-    // #[account(init, payer = user, space = 9000)]
     pub data_account: Account<'info, DataAccount>,
     #[account(mut)]
     pub user: Signer<'info>,
@@ -66,15 +76,15 @@ pub struct SubmissionContext<'info> {
     pub user: Signer<'info>,
 }
 
+#[account]
+pub struct DataAccount {
+    pub submission_count: u64,
+    pub submissions: Vec<Submission>,
+}
+
 #[derive(Debug, Clone, AnchorSerialize, AnchorDeserialize)]
 pub struct Submission {
     pub url: String,
     pub author: Pubkey,
     pub votes: i64,
-}
-
-#[account]
-pub struct DataAccount {
-    pub submission_count: u64,
-    pub submissions: Vec<Submission>,
 }

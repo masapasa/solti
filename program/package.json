@@ -22,6 +22,7 @@
     "idl:upgrade:both": "npm run idl:upgrade:sollery && npm run idl:upgrade:calculator",
     "project:init": "rm -fr target && seahorse build; anchor build && anchor deploy && npm run id:both && anchor build && anchor deploy && npm run idl:init:both && cd ../app",
     "project:upgrade": "seahorse build; anchor build && anchor deploy && npm run idl:upgrade:both",
+    "sollery:upgrade": "anchor build -p sollery && anchor deploy -p sollery && npm run idl:upgrade:both",
     "airdrop": "solana airdrop 2"
   },
   "dependencies": {
