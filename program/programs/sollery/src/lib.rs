@@ -11,10 +11,12 @@ fn add(data_account: &mut Account<DataAccount>, user: &mut Signer, url: String) 
     };
 
     // TODO: Is this needed?
-    if data_account.submissions.len() < usize::MAX - 1 {
-        data_account.submissions.push(submission);
-    }
+    require!(
+        data_account.submissions.len() < (usize::MAX - 1),
+        SolvationError::SubmissionCountExceeded
+    );
 
+    data_account.submissions.push(submission);
     Ok(())
 }
 
@@ -38,19 +40,25 @@ pub mod sollery {
 
     pub fn upvote_submission(context: Context<SubmissionContext>, index: u8) -> Result<()> {
         let data_account = &mut context.accounts.data_account;
-        // TODO: Does the if statement bloat the program?
-        if usize::from(index) < data_account.submissions.len() {
-            data_account.submissions[index as usize].votes += 1;
-        }
+        // TODO: Does the require statement bloat the program?
+        require!(
+            usize::from(index) < data_account.submissions.len(),
+            SolvationError::SubmissionIndexOutOfRange
+        );
+
+        data_account.submissions[index as usize].votes += 1;
         Ok(())
     }
 
     pub fn downvote_submission(context: Context<SubmissionContext>, index: u8) -> Result<()> {
         let data_account = &mut context.accounts.data_account;
-        // TODO: Does the if statement bloat the program?
-        if usize::from(index) < data_account.submissions.len() {
-            data_account.submissions[index as usize].votes -= 1;
-        }
+        // TODO: Does the require statement bloat the program?
+        require!(
+            usize::from(index) < data_account.submissions.len(),
+            SolvationError::SubmissionIndexOutOfRange
+        );
+
+        data_account.submissions[index as usize].votes -= 1;
         Ok(())
     }
 }
@@ -90,4 +98,12 @@ pub struct Submission {
     pub url: String,
     pub author: Pubkey,
     pub votes: i64,
+}
+
+#[error_code]
+pub enum SolvationError {
+    #[msg("The submission count is limited to usize::MAX.")]
+    SubmissionCountExceeded,
+    #[msg("The submission being voted on is out of range.")]
+    SubmissionIndexOutOfRange,
 }
