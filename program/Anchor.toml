@@ -6,9 +6,9 @@ skip-lint = false
 sollery = "25to815MeTgAP5q87EkbSFqBh1XgL2AR6DZwHNKyEGkX"
 calculator = "F71MP2c2WXJC6mMpCk3TdCjGRekmRVQ9foEqzPkz9ZCL"
 
-[registry]
+# [registry]
 #url = "https://anchor.projectserum.com"
-url = "https://api.apr.dev"
+# url = "https://api.apr.dev"
 
 [provider]
 # cluster = "localnet"
