@@ -3,8 +3,8 @@ seeds = false
 skip-lint = false
 [programs.localnet]
 # Need to update these IDs after the first deployment to localnet (e.g. by running scripts/update-anchor-toml.sh).
-sollery = "25to815MeTgAP5q87EkbSFqBh1XgL2AR6DZwHNKyEGkX"
-calculator = "F71MP2c2WXJC6mMpCk3TdCjGRekmRVQ9foEqzPkz9ZCL"
+sollery = "DnjcDHRBm5r2pADBZ6SWxynFKk96egQDwrRCAMsURuGk"
+calculator = "BPCbauHngosJXLYk2aorT5oKDe8VUhxSPmKJQxVXW5go"
 
 # [registry]
 #url = "https://anchor.projectserum.com"

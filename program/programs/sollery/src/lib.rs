@@ -1,7 +1,7 @@
 use anchor_lang::prelude::*;
 
 // Need to update this ID after the first deployment to localnet (e.g. by running scripts/update-lib-rs.sh).
-declare_id!("25to815MeTgAP5q87EkbSFqBh1XgL2AR6DZwHNKyEGkX");
+declare_id!("DnjcDHRBm5r2pADBZ6SWxynFKk96egQDwrRCAMsURuGk");
 
 fn add(data_account: &mut Account<DataAccount>, user: &mut Signer, url: String) -> Result<()> {
     let submission = Submission {

@@ -1,0 +1,8 @@
+name: solvation
+id: 30e4dfc1-2b14-4be7-bf94-deee48b16b3f
+language: TypeScript
+extensions:
+  - .ts
+  - .cts
+  - .mts
+  - .tsx
