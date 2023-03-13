@@ -1,21 +1,41 @@
-import { ChatGPTAPI } from "chatgpt";
 import { Configuration, OpenAIApi } from "openai";
-import { oraPromise } from "ora";
 import { FC, useState } from "react";
-
 
 export const GenerateView: FC = ({}) => {
   const [text, setText] = useState("");
   const [summarizedtext, setsummarizedtext] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const openai = new ChatGPTAPI({
+  const configuration = new Configuration({
     apiKey: process.env.OPENAI_API_KEY,
-    debug: false
   });
-  const res = await oraPromise(api.sendMessage(prompt), {
-    text: prompt
-  })
+  const openai = new OpenAIApi(configuration);
+
+  const HandleSubmit = (e) => {
+    setLoading(true);
+    e.preventDefault();
+    openai
+      .createCompletion({
+        model: "gpt-3.5-turbo",
+        prompt: generatePrompt(text),
+        temperature: 0.6,
+        max_tokens: 100,
+      })
+      .then((res) => {
+        if (res.status === 200) {
+          setLoading(false);
+          setsummarizedtext(res?.data?.choices[0]?.text);
+        }
+      })
+      .catch((err) => {
+        console.log(err, "An error occured");
+      });
+  };
+
+  function generatePrompt(text) {
+    // return `Summarize this in five lines ${text}. and break them into seperate lines`;
+    return `Summarize this  ${text}. and break them into seperate lines`;
+  }
 
   return (
     <div className="App_">
