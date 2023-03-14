@@ -1,21 +1,24 @@
 import { ChatGPTAPI } from "chatgpt";
 import { Configuration, OpenAIApi } from "openai";
 import { oraPromise } from "ora";
-import { FC, useState } from "react";
+import { FC, useEffect, useState } from "react";
 
-
-export const GenerateView: FC = ({}) => {
+export const GenerateView: FC = async ({}) => {
   const [text, setText] = useState("");
   const [summarizedtext, setsummarizedtext] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const openai = new ChatGPTAPI({
-    apiKey: process.env.OPENAI_API_KEY,
-    debug: false
-  });
-  const res = await oraPromise(api.sendMessage(prompt), {
-    text: prompt
-  })
+  // const openai = new ChatGPTAPI({
+  //   apiKey: process.env.OPENAI_API_KEY,
+  //   debug: false,
+  // });
+  useEffect(() => {
+    async function HandleSubmit() {
+      const res = await oraPromise(api.sendMessage(prompt), {
+        text: prompt
+      });
+    }
+  }, []);
 
   return (
     <div className="App_">
